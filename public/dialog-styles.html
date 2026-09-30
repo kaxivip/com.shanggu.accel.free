@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>弹窗样式方案预览</title>
+<style>
+body{margin:0;background:#060d18;font:14px/1.55 system-ui,'Microsoft YaHei',sans-serif;color:#eaf6ff}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:18px;margin:0 0 4px}
+.sub{color:#8fb4cc;font-size:13px;margin:0 0 18px}
+.switch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.switch button{min-height:42px;padding:10px 18px;border-radius:12px;border:1px solid #2b4a6b;background:#0c2547;color:#8fb4cc;font:inherit;cursor:pointer}
+.switch button.on{background:#1db0cb;border-color:#1db0cb;color:#04121f;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start}
+.cell{background:#0a1626;border:1px solid #1d334f;border-radius:16px;padding:18px;min-height:340px;position:relative;overflow:hidden}
+.cell h3{margin:0 0 12px;font-size:13px;color:#8fb4cc;font-weight:600}
+.demo{position:relative;height:290px;border-radius:12px;background:#01234b;overflow:hidden}
+.note{font-size:12px;color:#8fb4cc;margin-top:10px;line-height:1.7}
+/* ===== 方案公共骨架（颜色/圆角/阴影由变量驱动） ===== */
+.demo{--bg:#01234b}
+.v{position:absolute;inset:0;font-size:13px}
+/* 遮罩 */
+.v .mask{position:absolute;inset:0;display:grid;place-items:center}
+.v .mask.bottom{align-items:end;padding-bottom:16px;place-items:end center}
+/* 居中对话框 */
+.v .dlg{width:250px;padding:22px 20px;text-align:center}
+.v .dlg .ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;margin:0 auto 12px;font-size:20px}
+.v .dlg b{display:block;font-size:16px;margin-bottom:6px}
+.v .dlg p{margin:0 0 16px;font-size:12.5px;opacity:.75;line-height:1.6}
+.v .btns{display:flex;gap:10px}
+.v .btns button{flex:1;min-height:42px;border:0;border-radius:12px;font:inherit;font-weight:700;cursor:pointer}
+.v .pri{background:var(--pri);color:var(--onpri)}
+.v .sec{background:transparent;color:var(--muted);border:1px solid var(--brd)!important}
+/* toast */
+.v .toast{position:absolute;top:14px;left:14px;right:14px;display:flex;align-items:center;gap:9px;font-size:12.5px;padding:11px 14px}
+.v .toast i{font-style:normal;flex-shrink:0}
+/* 底部 sheet */
+.v .sheet{width:88%;padding:20px 18px}
+.v .sheet .bar{width:36px;height:4px;border-radius:2px;margin:0 auto 14px;background:var(--brd)}
+.v .sheet b{display:block;font-size:15px;margin-bottom:6px;text-align:center}
+.v .sheet p{margin:0 0 14px;font-size:12px;opacity:.75;text-align:center}
+.v .sheet .full{width:100%;min-height:44px;border:0;border-radius:12px;font:inherit;font-weight:700;background:var(--pri);color:var(--onpri);cursor:pointer}
+/* ===== 方案 A 卡片描边：延续现有方向，收敛细节 ===== */
+.vA{--pri:#1db0cb;--onpri:#04121f;--muted:#8fb4cc;--brd:#2b4a6b}
+.vA .dlg,.vA .sheet{background:#0c2547;border:1px solid #2b4a6b;border-radius:18px;box-shadow:0 12px 34px #0005}
+.vA .dlg .ic{background:#1db0cb1f;color:#1db0cb}
+.vA .toast{background:#0f2a4d;border:1px solid #2b4a6b;border-radius:12px;color:#dcf2fa;box-shadow:0 8px 24px #0005}
+.vA .toast i{color:#46bed4}
+.vA .mask{background:#040815a6}
+/* ===== 方案 B 深色悬浮：更暗更轻，青色图标，柠色主按钮 ===== */
+.vB{--pri:#8ce744;--onpri:#08131f;--muted:#8fb4cc;--brd:#24344d}
+.vB .dlg,.vB .sheet{background:#0a1c38;border-radius:16px;box-shadow:0 18px 50px #000a}
+.vB .dlg .ic{background:#1db0cb26;color:#46bed4}
+.vB .toast{background:#081527;border-radius:99px;color:#cfe6f5;box-shadow:0 10px 28px #000a}
+.vB .toast i{color:#8ce744}
+.vB .mask{background:#010914c9}
+/* ===== 方案 C 亮面简卡：近白卡片，反差强，最板正 ===== */
+.vC{--pri:#1db0cb;--onpri:#ffffff;--muted:#5b7288;--brd:#d5e4ef}
+.vC .dlg,.vC .sheet{background:#f4f9fd;border-radius:16px;box-shadow:0 16px 44px #0008}
+.vC .dlg b,.vC .sheet b{color:#0d2438}
+.vC .dlg p,.vC .sheet p{opacity:1;color:#5b7288}
+.vC .dlg .ic{background:#1db0cb1f;color:#0e7f99}
+.vC .sec{color:#5b7288;border-color:#c4d6e4!important}
+.vC .toast{background:#0d2438;border-radius:12px;color:#eaf6ff;box-shadow:0 10px 26px #0007}
+.vC .toast i{color:#4fc8e8}
+.vC .mask{background:#020c1ab8}
+/* ===== 方案 D 极简线框：无阴影同底色，青色顶饰条 ===== */
+.vD{--pri:#1db0cb;--onpri:#04121f;--muted:#8fb4cc;--brd:#1e4d78}
+.vD .dlg,.vD .sheet{background:#07203f;border:1px solid #1e4d78;border-radius:14px;position:relative;overflow:hidden}
+.vD .dlg:before,.vD .sheet:before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#1db0cb}
+.vD .dlg .ic{background:transparent;color:#46bed4;border:1px solid #1e4d78}
+.vD .sec{border-color:#1e4d78!important}
+.vD .toast{background:#0a2748;border:1px solid #1e4d78;border-radius:10px;color:#cfe6f5}
+.vD .toast i{color:#46bed4}
+.vD .mask{background:#01182fb3}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>弹窗样式方案预览</h1>
+  <p class="sub">点击切换方案，每格演示：顶部提示 toast · 居中确认框 · 底部操作面板。确认选哪个后我再统一改进 app.html。</p>
+  <div class="switch" id="sw">
+    <button data-v="vA" class="on">A 卡片描边</button>
+    <button data-v="vB">B 深色悬浮</button>
+    <button data-v="vC">C 亮面简卡</button>
+    <button data-v="vD">D 极简线框</button>
+  </div>
+  <div class="grid">
+    <div class="cell"><h3>提示 toast（22 处notify共用）</h3>
+      <div class="demo"><div class="v vA" id="m1">
+        <div class="toast"><i>✦</i>兑换成功，会员时长已到账</div>
+      </div></div>
+      <p class="note" id="n1"></p>
+    </div>
+    <div class="cell"><h3>居中确认框（退出/删除等）</h3>
+      <div class="demo"><div class="v vA" id="m2">
+        <div class="mask"><div class="dlg">
+          <div class="ic">⊘</div><b>退出登录</b><p>退出后需要重新登录才能使用加速服务</p>
+          <div class="btns"><button class="sec">取消</button><button class="pri">确认退出</button></div>
+        </div></div>
+      </div></div>
+    </div>
+    <div class="cell"><h3>底部操作面板（兑换/绑定等）</h3>
+      <div class="demo"><div class="v vA" id="m3">
+        <div class="mask bottom"><div class="sheet">
+          <div class="bar"></div><b>积分兑换会员</b><p>1000 积分兑换 7×24 小时会员</p>
+          <button class="full">确认兑换</button>
+        </div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+<script>
+const notes={vA:'现有方向收敛版：深蓝卡片+描边，改动最小，toast 保留顶部横条。',
+vB:'更暗更轻盈：胶囊 toast、大圆角浮起、柠色主按钮，层次靠阴影不靠描边。',
+vC:'近白卡片反差最强、最板正，文字对比度最好；深色界面里跳脱感也最强。',
+vD:'同底色无阴影线框风，青色顶饰条做识别，最克制、最少视觉噪音。'};
+const ids=['m1','m2','m3'];
+document.getElementById('sw').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#sw button').forEach(x=>x.classList.toggle('on',x===b));
+  ids.forEach(id=>{const el=document.getElementById(id);el.className='v '+b.dataset.v});
+  document.getElementById('n1').textContent=notes[b.dataset.v];
+});
+const qv=new URLSearchParams(location.search).get('v');
+if(qv&&notes[qv]){document.querySelector('#sw [data-v='+qv+']').click()}
+document.getElementById('n1').textContent=notes[document.querySelector('#sw .on').dataset.v]||notes.vA;
+</script>
+</body>
+</html>
